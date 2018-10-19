@@ -88,22 +88,28 @@ def get_shortest(dist, board):
     path.reverse()
     return path
 
+
+def update_ground(i, j):
+    letter = root.grid_slaves(row=start_point.x, column=start_point.y)[0]['text']
+    if letter != 'E' and letter != 'S':
+       root.grid_slaves(row=i, column=j)[0]['text'] = '*'
+    root.grid_slaves(row=i, column=j)[0]['bg'] = 'green'
+
 #Draw the path founded with '*', the map is unchanged apart from the solution drawn on it
-def draw_sol(path, board):
+def draw_ground(path, board):
+    root.grid_slaves(row=start_point.x, column=start_point.y)[0]['text'] = 'E'
+    root.grid_slaves(row=end_point.x, column=end_point.y)[0]['text'] = 'S'
+
     for i in range(0, len(board)):
         for j in range(0, len(board[0])):
             if (i, j) in path:
-                root.grid_slaves(row=i, column=j)[0]['text'] = '*'
-                root.grid_slaves(row=i, column=j)[0]['bg'] = 'green'
-
-    root.grid_slaves(row=start_point.x, column=start_point.y)[0]['text'] = 'E'
-    root.grid_slaves(row=end_point.x, column=end_point.y)[0]['text'] = 'S'
-    return
+                root.after(1000, update_ground(i, j))
+                root.update()
 
 def run(board):
     dist = find_path(board)
     path = get_shortest(dist, board)
-    draw_sol(path, board)
+    draw_ground(path, board)
 
 
 #Main function, create a tk window each time we change file, yes it's dirty but it works
